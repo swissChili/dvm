@@ -1,0 +1,72 @@
+            -*- dvm: dynamic virtual machine -*-
+
+dvm is a virtual machine for a high level, dynamically typed,
+prototype based language. Everything in dvm programs is an
+object, similar to a lua or javascript object. Keys to objects
+can be any dvm type, and the special key `proto$` refers to
+the object's prototype. 
+
+Objects are passed by reference and are garbage collected.
+Functions are also objects whose prototype is the global
+object `function`. The global (root) object in dvm programs
+is called `$`. All variables and functions are entries in
+this object. A copy of the global state can be made by creating
+an object with it as it's prototype.
+
+The basic (non-object) value types in dvm are as follows:
+- number: a 64 bit float, dvm does not have integer values
+- byte: one byte
+More may be added as development progresses.
+
+Strings are constructed as arrays of runes. They are reference
+types, but they cannot be added to in place.
+
+Lists are just objects that tend to use numeric keys. There is
+no specific list type.
+
+  Note: Lists may be represented as vectors under the hood for
+  performance reasons.
+
+
+Assembly
+========
+
+dvm's assembly language looks fairly similar to most other
+assembly languages. Here is an example
+
+  ; $ refers to the global object
+  ; @ refers to the function's owner. Used to set an object's
+  ;   properties in a member function. If the function belongs
+  ;   to the object's prototype, @something will refer to the
+  ;   prototype instance of something if something does not
+  ;   exist on the object itself, however, attempting to set
+  ;   the value of something will always refer to the object
+  ;   itself, not it's prototype.
+  ; % refers to a functions local variables. These can only
+  ;   be numbers for performance reasons.
+
+  ; set global `num` to 24
+  $num = 24
+  $main:
+    push $num
+    push 2
+    div
+    %1 = new $squarer
+    pop %1.num
+    ; the method to invoke
+    push %1.square
+    ; the object to invoke it on
+    push %1
+    ; invoke the top item item on the stack with no arguments
+    invoke 0
+
+  ; new is syntactic sugar for the following:
+  ; $squarer = $nothing ; nothing is a global, empty object.
+  ; $squarer.proto$ = $object
+  $squarer = new $object
+  $squarer.square:
+    push @num
+    dup
+    mlt
+    push $print
+    invoke 1

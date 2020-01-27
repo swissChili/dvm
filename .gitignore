@@ -1,0 +1,10 @@
+*.log
+*.status
+Makefile
+.deps
+*.o
+*.a
+*.so
+dvm
+.dirstamp
+config.h.in
