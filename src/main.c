@@ -8,7 +8,7 @@ int main()
   // little-endian 1
   char bytes[] =
   {
-    PUSHIN, 1, 0, 0, 0, 0, 0, 0, 0,
+    PUSHIN, 0, 0, 0, 0, 0, 1, 0, 0,
     DEBUG, 0
   };
   dvm_run(NULL, bytes);
