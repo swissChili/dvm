@@ -15,7 +15,7 @@ an object with it as it's prototype.
 
 The basic (non-object) value types in dvm are as follows:
 - number: a 64 bit float, dvm does not have integer values
-- string: array of bytes (utf-8)
+- byte: one byte
 More may be added as development progresses.
 
 Strings are constructed as arrays of runes. They are reference
@@ -71,3 +71,24 @@ assembly languages. Here is an example
     push $print
     push $
     invoke
+
+
+Building
+========
+
+Run the usual commands to build dvm. In addition, libcollect
+is required to be installed. Download and build it from
+<github.com/swissChili/libcollect>. The configure script will
+require that the .pc and .so files are installed in a standard
+location like /usr/local.
+
+  # build libcollect
+  $ mkdir build && cd build
+  $ cmake ..
+  $ make
+  $ sudo make install
+
+  # build dvm
+  $ ./configure
+  $ make
+  $ sudo make install
