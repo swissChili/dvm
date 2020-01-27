@@ -50,4 +50,8 @@ dvm_value *dvm_new_char(char c);
 
 void dvm_print_value(dvm_value *v);
 
+void dvm_object_set(dvm_object *obj, char *key, dvm_value *val);
+dvm_value *dvm_object_get(dvm_object *obj, char *key);
+
+
 #endif//DVM_TYPE_H

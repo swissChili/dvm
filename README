@@ -15,7 +15,7 @@ an object with it as it's prototype.
 
 The basic (non-object) value types in dvm are as follows:
 - number: a 64 bit float, dvm does not have integer values
-- byte: one byte
+- string: array of bytes (utf-8)
 More may be added as development progresses.
 
 Strings are constructed as arrays of runes. They are reference
@@ -58,7 +58,7 @@ assembly languages. Here is an example
     ; the object to invoke it on
     push %1
     ; invoke the top item item on the stack with no arguments
-    invoke 0
+    invoke
 
   ; new is syntactic sugar for the following:
   ; $squarer = $nothing ; nothing is a global, empty object.
@@ -69,4 +69,5 @@ assembly languages. Here is an example
     dup
     mlt
     push $print
-    invoke 1
+    push $
+    invoke

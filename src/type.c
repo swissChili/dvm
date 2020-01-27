@@ -57,7 +57,28 @@ void dvm_print_value(dvm_value *v)
   switch (v->type)
   {
     case NUMBER:
-      printf("%f", v->num_val);
+      printf("%f\n", v->num_val);
+  }
+}
+
+void dvm_object_set(dvm_object *obj, char *key, dvm_value *val)
+{
+  map_set(obj->slots, key, val);
+}
+
+dvm_value *dvm_object_get(dvm_object *obj, char *key)
+{
+  if (map_exists(obj->slots, key))
+  {
+    return (dvm_value *)map_get(obj->slots, key);
+  }
+  else if (obj->proto != NULL && map_exists(obj->proto->slots, key))
+  {
+    return (dvm_value *)map_get(obj->proto->slots, key);
+  }
+  else
+  {
+    return NULL;
   }
 }
 

@@ -12,6 +12,11 @@ enum
   ASNGLBL = 'G', // $something = 123
   ASNTHIS = 'T', // @something = 123
   ASNLOCL = 'L', // %n = 123
+  ASNGLBLFN = 'f', // $object.method = label
+                   // or $object.method:
+  POPGLBL = '$', // pop $something
+  POPLOCL = '%', // pop %n
+  POPTHIS = '@', // pop @something
 
   DEBUG = '!'
 };

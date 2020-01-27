@@ -6,11 +6,12 @@ char *dvm_bc_str(char **bc)
   do
     (*bc)++;
   while (**bc);
+  (*bc)++;
 
   return str;
 }
 
-#define DVM_BC_T(bc, t) t t_##t = *(t *)*bc; bc += sizeof(t); return t_##t;
+#define DVM_BC_T(bc, t) t t_##t = *(t *)*bc; *bc += sizeof(t); return t_##t;
 
 double dvm_bc_dbl(char **bc)
 {

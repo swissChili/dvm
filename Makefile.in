@@ -104,7 +104,7 @@ PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_dvm_OBJECTS = src/dvm-main.$(OBJEXT) src/dvm-type.$(OBJEXT) \
 	src/dvm-object.$(OBJEXT) src/dvm-bytecode.$(OBJEXT) \
-	src/dvm-vm.$(OBJEXT)
+	src/dvm-vm.$(OBJEXT) src/dvm-debug.$(OBJEXT)
 dvm_OBJECTS = $(am_dvm_OBJECTS)
 am__DEPENDENCIES_1 =
 dvm_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -126,8 +126,9 @@ DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = src/$(DEPDIR)/dvm-bytecode.Po \
-	src/$(DEPDIR)/dvm-main.Po src/$(DEPDIR)/dvm-object.Po \
-	src/$(DEPDIR)/dvm-type.Po src/$(DEPDIR)/dvm-vm.Po
+	src/$(DEPDIR)/dvm-debug.Po src/$(DEPDIR)/dvm-main.Po \
+	src/$(DEPDIR)/dvm-object.Po src/$(DEPDIR)/dvm-type.Po \
+	src/$(DEPDIR)/dvm-vm.Po
 am__mv = mv -f
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -283,9 +284,9 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 dvm_SOURCES = src/main.c src/type.c src/type.h src/object.c src/object.h \
-							src/bytecode.c src/bytecode.h src/vm.c src/vm.h
+							src/bytecode.c src/bytecode.h src/vm.c src/vm.h src/debug.c src/debug.h
 
-dvm_CFLAGS = $(LIBCOLLECT_CFLAGS)
+dvm_CFLAGS = $(LIBCOLLECT_CFLAGS) -D_DEBUG
 dvm_LDADD = $(LIBCOLLECT_LIBS)
 AUTOMAKE_OPTIONS = subdir-objects
 all: all-am
@@ -383,6 +384,8 @@ src/dvm-bytecode.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/dvm-vm.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
+src/dvm-debug.$(OBJEXT): src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
 
 dvm$(EXEEXT): $(dvm_OBJECTS) $(dvm_DEPENDENCIES) $(EXTRA_dvm_DEPENDENCIES) 
 	@rm -f dvm$(EXEEXT)
@@ -396,6 +399,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/dvm-bytecode.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/dvm-debug.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/dvm-main.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/dvm-object.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/dvm-type.Po@am__quote@ # am--include-marker
@@ -492,6 +496,20 @@ src/dvm-vm.obj: src/vm.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/vm.c' object='src/dvm-vm.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dvm_CFLAGS) $(CFLAGS) -c -o src/dvm-vm.obj `if test -f 'src/vm.c'; then $(CYGPATH_W) 'src/vm.c'; else $(CYGPATH_W) '$(srcdir)/src/vm.c'; fi`
+
+src/dvm-debug.o: src/debug.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dvm_CFLAGS) $(CFLAGS) -MT src/dvm-debug.o -MD -MP -MF src/$(DEPDIR)/dvm-debug.Tpo -c -o src/dvm-debug.o `test -f 'src/debug.c' || echo '$(srcdir)/'`src/debug.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/dvm-debug.Tpo src/$(DEPDIR)/dvm-debug.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/debug.c' object='src/dvm-debug.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dvm_CFLAGS) $(CFLAGS) -c -o src/dvm-debug.o `test -f 'src/debug.c' || echo '$(srcdir)/'`src/debug.c
+
+src/dvm-debug.obj: src/debug.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dvm_CFLAGS) $(CFLAGS) -MT src/dvm-debug.obj -MD -MP -MF src/$(DEPDIR)/dvm-debug.Tpo -c -o src/dvm-debug.obj `if test -f 'src/debug.c'; then $(CYGPATH_W) 'src/debug.c'; else $(CYGPATH_W) '$(srcdir)/src/debug.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/dvm-debug.Tpo src/$(DEPDIR)/dvm-debug.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/debug.c' object='src/dvm-debug.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dvm_CFLAGS) $(CFLAGS) -c -o src/dvm-debug.obj `if test -f 'src/debug.c'; then $(CYGPATH_W) 'src/debug.c'; else $(CYGPATH_W) '$(srcdir)/src/debug.c'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -764,6 +782,7 @@ clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 		-rm -f src/$(DEPDIR)/dvm-bytecode.Po
+	-rm -f src/$(DEPDIR)/dvm-debug.Po
 	-rm -f src/$(DEPDIR)/dvm-main.Po
 	-rm -f src/$(DEPDIR)/dvm-object.Po
 	-rm -f src/$(DEPDIR)/dvm-type.Po
@@ -816,6 +835,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
 		-rm -f src/$(DEPDIR)/dvm-bytecode.Po
+	-rm -f src/$(DEPDIR)/dvm-debug.Po
 	-rm -f src/$(DEPDIR)/dvm-main.Po
 	-rm -f src/$(DEPDIR)/dvm-object.Po
 	-rm -f src/$(DEPDIR)/dvm-type.Po

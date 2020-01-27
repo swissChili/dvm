@@ -8,8 +8,20 @@ int main()
   // little-endian 1
   char bytes[] =
   {
-    PUSHIN, 0, 0, 0, 0, 0, 1, 0, 0,
-    DEBUG, 0
+    PUSHIN, 0, 0, 0, 0, 0, 0, 0, 0x40, // push 0
+    DEBUG,
+    ASNGLBL, 'b', 0, // $b = 2.5
+    0, 0, 0, 0, 0, 0, 0x4, 0x40,
+    LDGLBL, 'b', 0, // push $b
+    DEBUG,
+    0
   };
-  dvm_run(NULL, bytes);
+
+  dvm_object *global = dvm_new_object(NULL);
+
+  printf("it's %f\n", *(double *)(bytes + 13));
+
+  dvm_run(global, bytes);
+
+  dvm_free_object(global);
 }

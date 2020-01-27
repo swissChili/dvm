@@ -3,7 +3,6 @@
 
 #include <collect/map.h>
 
-
 struct dvm_object
 {
   struct dvm_object *proto;
