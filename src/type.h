@@ -2,15 +2,19 @@
 #define DVM_TYPE_H
 
 #include "object.h"
+#include <collect/vector.h>
 
 enum
 {
   NUMBER = 0,
   CHAR,
   OBJECT,
+  NATIVEFN,
+  FUNCTION
 };
 
 typedef void (*dvm_vvisitor_t)(dvm_object *);
+typedef void (*dvm_nativefn_t)(vector *stack);
 
 struct dvm_value
 {
@@ -20,6 +24,8 @@ struct dvm_value
     void *ref_val;
     double num_val;
     char char_val;
+    uint64_t uint_val;
+    int64_t int_val;
   };
   unsigned refs;
 };

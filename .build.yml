@@ -1,0 +1,24 @@
+image: ubuntu/latest
+packages:
+  - build-essential
+  - cmake
+  - autotools-dev
+  - autoconf
+  - pkg-config
+  
+sources:
+  - https://git.sr.ht/~swisschili/dvm
+  - https://github.com/swissChili/libcollect
+
+tasks:
+  - libcollect: |
+      cd libcollect
+      mkdir build && cd build
+      cmake ..
+      make
+      sudo make install
+      
+  - build: |
+      cd dvm
+      ./configure
+      make
