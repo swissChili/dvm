@@ -86,7 +86,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = dvm$(EXEEXT)
+bin_PROGRAMS = dvm$(EXEEXT) das$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -102,6 +102,9 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
+am_das_OBJECTS = src/asm/lexer.$(OBJEXT) src/asm/parser.$(OBJEXT)
+das_OBJECTS = $(am_das_OBJECTS)
+das_LDADD = $(LDADD)
 am_dvm_OBJECTS = src/dvm-main.$(OBJEXT) src/dvm-type.$(OBJEXT) \
 	src/dvm-object.$(OBJEXT) src/dvm-bytecode.$(OBJEXT) \
 	src/dvm-vm.$(OBJEXT) src/dvm-debug.$(OBJEXT)
@@ -128,7 +131,8 @@ am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = src/$(DEPDIR)/dvm-bytecode.Po \
 	src/$(DEPDIR)/dvm-debug.Po src/$(DEPDIR)/dvm-main.Po \
 	src/$(DEPDIR)/dvm-object.Po src/$(DEPDIR)/dvm-type.Po \
-	src/$(DEPDIR)/dvm-vm.Po
+	src/$(DEPDIR)/dvm-vm.Po src/asm/$(DEPDIR)/lexer.Po \
+	src/asm/$(DEPDIR)/parser.Po
 am__mv = mv -f
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -146,8 +150,21 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(dvm_SOURCES)
-DIST_SOURCES = $(dvm_SOURCES)
+LEXCOMPILE = $(LEX) $(AM_LFLAGS) $(LFLAGS)
+AM_V_LEX = $(am__v_LEX_@AM_V@)
+am__v_LEX_ = $(am__v_LEX_@AM_DEFAULT_V@)
+am__v_LEX_0 = @echo "  LEX     " $@;
+am__v_LEX_1 = 
+YLWRAP = $(top_srcdir)/ylwrap
+am__yacc_c2h = sed -e s/cc$$/hh/ -e s/cpp$$/hpp/ -e s/cxx$$/hxx/ \
+		   -e s/c++$$/h++/ -e s/c$$/h/
+YACCCOMPILE = $(YACC) $(AM_YFLAGS) $(YFLAGS)
+AM_V_YACC = $(am__v_YACC_@AM_V@)
+am__v_YACC_ = $(am__v_YACC_@AM_DEFAULT_V@)
+am__v_YACC_0 = @echo "  YACC    " $@;
+am__v_YACC_1 = 
+SOURCES = $(das_SOURCES) $(dvm_SOURCES)
+DIST_SOURCES = $(das_SOURCES) $(dvm_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -175,7 +192,8 @@ CTAGS = ctags
 CSCOPE = cscope
 AM_RECURSIVE_TARGETS = cscope
 am__DIST_COMMON = $(srcdir)/Makefile.in AUTHORS COPYING ChangeLog \
-	INSTALL NEWS README compile depcomp install-sh missing
+	INSTALL NEWS README compile depcomp install-sh missing \
+	src/asm/lexer.c src/asm/parser.c src/asm/parser.h ylwrap
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -217,6 +235,9 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
+LEX = @LEX@
+LEXLIB = @LEXLIB@
+LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
 LIBCOLLECT_CFLAGS = @LIBCOLLECT_CFLAGS@
 LIBCOLLECT_LIBS = @LIBCOLLECT_LIBS@
 LIBOBJS = @LIBOBJS@
@@ -240,6 +261,8 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
+YACC = @YACC@
+YFLAGS = @YFLAGS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -289,10 +312,14 @@ dvm_SOURCES = src/main.c src/type.c src/type.h src/object.c src/object.h \
 dvm_CFLAGS = $(LIBCOLLECT_CFLAGS) -D_DEBUG
 dvm_LDADD = $(LIBCOLLECT_LIBS)
 AUTOMAKE_OPTIONS = subdir-objects
-all: all-am
+AM_YFLAGS = -d
+BUILT_SOURCES = src/asm/parser.h
+das_SOURCES = src/asm/lexer.l src/asm/parser.y
+all: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .o .obj
+.SUFFIXES: .c .l .o .obj .y
 am--refresh: Makefile
 	@:
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
@@ -368,6 +395,23 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+src/asm/$(am__dirstamp):
+	@$(MKDIR_P) src/asm
+	@: > src/asm/$(am__dirstamp)
+src/asm/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) src/asm/$(DEPDIR)
+	@: > src/asm/$(DEPDIR)/$(am__dirstamp)
+src/asm/lexer.$(OBJEXT): src/asm/$(am__dirstamp) \
+	src/asm/$(DEPDIR)/$(am__dirstamp)
+src/asm/parser.h: src/asm/parser.c
+	@if test ! -f $@; then rm -f src/asm/parser.c; else :; fi
+	@if test ! -f $@; then $(MAKE) $(AM_MAKEFLAGS) src/asm/parser.c; else :; fi
+src/asm/parser.$(OBJEXT): src/asm/$(am__dirstamp) \
+	src/asm/$(DEPDIR)/$(am__dirstamp)
+
+das$(EXEEXT): $(das_OBJECTS) $(das_DEPENDENCIES) $(EXTRA_das_DEPENDENCIES) 
+	@rm -f das$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(das_OBJECTS) $(das_LDADD) $(LIBS)
 src/$(am__dirstamp):
 	@$(MKDIR_P) src
 	@: > src/$(am__dirstamp)
@@ -394,6 +438,7 @@ dvm$(EXEEXT): $(dvm_OBJECTS) $(dvm_DEPENDENCIES) $(EXTRA_dvm_DEPENDENCIES)
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f src/*.$(OBJEXT)
+	-rm -f src/asm/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
@@ -404,6 +449,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/dvm-object.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/dvm-type.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/dvm-vm.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@src/asm/$(DEPDIR)/lexer.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@src/asm/$(DEPDIR)/parser.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -510,6 +557,12 @@ src/dvm-debug.obj: src/debug.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/debug.c' object='src/dvm-debug.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dvm_CFLAGS) $(CFLAGS) -c -o src/dvm-debug.obj `if test -f 'src/debug.c'; then $(CYGPATH_W) 'src/debug.c'; else $(CYGPATH_W) '$(srcdir)/src/debug.c'; fi`
+
+.l.c:
+	$(AM_V_LEX)$(am__skiplex) $(SHELL) $(YLWRAP) $< $(LEX_OUTPUT_ROOT).c $@ -- $(LEXCOMPILE)
+
+.y.c:
+	$(AM_V_YACC)$(am__skipyacc) $(SHELL) $(YLWRAP) $< y.tab.c $@ y.tab.h `echo $@ | $(am__yacc_c2h)` y.output $*.output -- $(YACCCOMPILE)
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -737,13 +790,15 @@ distcleancheck: distclean
 	       $(distcleancheck_listfiles) ; \
 	       exit 1; } >&2
 check-am: all-am
-check: check-am
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-am
 all-am: Makefile $(PROGRAMS)
 installdirs:
 	for dir in "$(DESTDIR)$(bindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
-install: install-am
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
@@ -771,10 +826,16 @@ distclean-generic:
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
 	-rm -f src/$(DEPDIR)/$(am__dirstamp)
 	-rm -f src/$(am__dirstamp)
+	-rm -f src/asm/$(DEPDIR)/$(am__dirstamp)
+	-rm -f src/asm/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+	-rm -f src/asm/lexer.c
+	-rm -f src/asm/parser.c
+	-rm -f src/asm/parser.h
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
 clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
@@ -787,6 +848,8 @@ distclean: distclean-am
 	-rm -f src/$(DEPDIR)/dvm-object.Po
 	-rm -f src/$(DEPDIR)/dvm-type.Po
 	-rm -f src/$(DEPDIR)/dvm-vm.Po
+	-rm -f src/asm/$(DEPDIR)/lexer.Po
+	-rm -f src/asm/$(DEPDIR)/parser.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -840,6 +903,8 @@ maintainer-clean: maintainer-clean-am
 	-rm -f src/$(DEPDIR)/dvm-object.Po
 	-rm -f src/$(DEPDIR)/dvm-type.Po
 	-rm -f src/$(DEPDIR)/dvm-vm.Po
+	-rm -f src/asm/$(DEPDIR)/lexer.Po
+	-rm -f src/asm/$(DEPDIR)/parser.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -857,7 +922,7 @@ ps-am:
 
 uninstall-am: uninstall-binPROGRAMS
 
-.MAKE: install-am install-strip
+.MAKE: all check install install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am am--depfiles am--refresh check \
 	check-am clean clean-binPROGRAMS clean-cscope clean-generic \

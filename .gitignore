@@ -9,5 +9,6 @@ Makefile
 dvm
 .dirstamp
 config.h.in
-
 autom4te.cache
+/src/asm/*.c
+/src/asm/*.h

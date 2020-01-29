@@ -5,6 +5,8 @@ packages:
   - autotools-dev
   - autoconf
   - pkg-config
+  - flex
+  - bison
   
 sources:
   - https://git.sr.ht/~swisschili/dvm

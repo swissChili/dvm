@@ -11,5 +11,7 @@ AC_CONFIG_FILES([Makefile])
 AM_INIT_AUTOMAKE([foreign -Wall -Werror])
 
 AC_PROG_CC
+AC_PROG_LEX
+AC_PROG_YACC
 
 AC_OUTPUT

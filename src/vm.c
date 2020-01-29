@@ -62,12 +62,20 @@ void dvm_run(dvm_object *root, char *bc)
           exit(1);
         }
         break;
+
       case ASNGLBL:
         str = dvm_bc_str(&bc);
         v = dvm_new_value(NUMBER);
         v->num_val = dvm_bc_dbl(&bc);
         dbg("Assigning global %s to %f @ %ld\n", str, v->num_val, (long)(bc - original));
         dvm_object_set(root, str, v);
+        break;
+
+      case ASNTHIS:
+        str = dvm_bc_str(&bc);
+        v = dvm_new_value(NUMBER);
+        v->num_val = dvm_bc_dbl(&bc);
+        dvm_object_set(this_stack->last->val, str, v);
         break;
     }
     dbg("0x%x '%c' @ %ld\n", *bc, *bc, (long)(bc - original));
