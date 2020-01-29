@@ -3,11 +3,14 @@
   #include <stdio.h>
 
   int yylex();
+  extern int yylineno;
   int yyerror(const char *bruh)
   {
-    puts(bruh);
+    fprintf(stderr, "\033[31mError near line %d:\033[0m %s\n", yylineno, bruh);
     exit(1);
   }
+
+  char error_text[1024] = { 0 };
 %}
 
 %union {
@@ -42,8 +45,8 @@ instruction:
   }
   | T_IDENT
   {
-    printf("Error: '%s' not defined.", $1);
-    yyerror("Instruction undefined error");
+    sprintf(error_text, "'%s' not defined", $1);
+    yyerror(error_text);
   }
 
 %%

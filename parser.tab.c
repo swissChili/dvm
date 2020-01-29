@@ -72,13 +72,16 @@
   #include <stdio.h>
 
   int yylex();
+  extern int yylineno;
   int yyerror(const char *bruh)
   {
-    puts(bruh);
+    fprintf(stderr, "\033[31mError near line %d:\033[0m %s\n", yylineno, bruh);
     exit(1);
   }
 
-#line 82 "parser.tab.c"
+  char error_text[1024] = { 0 };
+
+#line 85 "parser.tab.c"
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus
@@ -126,13 +129,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 13 "src/asm/parser.y"
+#line 16 "src/asm/parser.y"
 
   double number;
   char sigil;
   char *text;
 
-#line 136 "parser.tab.c"
+#line 139 "parser.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -438,7 +441,7 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    28,    28,    29,    35,    39,    43
+       0,    31,    31,    32,    38,    42,    46
 };
 #endif
 
@@ -1212,40 +1215,40 @@ yyreduce:
   switch (yyn)
     {
   case 3:
-#line 30 "src/asm/parser.y"
+#line 33 "src/asm/parser.y"
     {
     //
   }
-#line 1220 "parser.tab.c"
+#line 1223 "parser.tab.c"
     break;
 
   case 4:
-#line 36 "src/asm/parser.y"
+#line 39 "src/asm/parser.y"
     {
     printf("push %f\n", (yyvsp[0].number));
   }
-#line 1228 "parser.tab.c"
+#line 1231 "parser.tab.c"
     break;
 
   case 5:
-#line 40 "src/asm/parser.y"
+#line 43 "src/asm/parser.y"
     {
     printf("pop %f\n", (yyvsp[0].number));
   }
-#line 1236 "parser.tab.c"
+#line 1239 "parser.tab.c"
     break;
 
   case 6:
-#line 44 "src/asm/parser.y"
+#line 47 "src/asm/parser.y"
     {
-    printf("Error: '%s' not defined.", (yyvsp[0].text));
-    yyerror("Instruction undefined error");
+    sprintf(error_text, "'%s' not defined", (yyvsp[0].text));
+    yyerror(error_text);
   }
-#line 1245 "parser.tab.c"
+#line 1248 "parser.tab.c"
     break;
 
 
-#line 1249 "parser.tab.c"
+#line 1252 "parser.tab.c"
 
       default: break;
     }
@@ -1477,7 +1480,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 49 "src/asm/parser.y"
+#line 52 "src/asm/parser.y"
 
 
 int main(int argc, char **argv)
