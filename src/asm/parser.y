@@ -20,7 +20,7 @@
 }
 
 %token <number> T_NUMBER
-%token T_SIGIL
+%token <sigil> T_SIGIL
 %token <text> T_IDENT
 %token T_PUSH
 %token T_POP
@@ -39,9 +39,14 @@ instruction:
   {
     printf("push %f\n", $2);
   }
-  | T_POP T_NUMBER
+  | T_POP T_SIGIL T_IDENT
   {
-    printf("pop %f\n", $2);
+    switch ($2)
+    {
+      case '$':
+        printf("$%s = pop\n", $3);
+        break;
+    }
   }
   | T_IDENT
   {

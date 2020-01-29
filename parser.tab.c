@@ -394,7 +394,7 @@ union yyalloc
 /* YYNRULES -- Number of rules.  */
 #define YYNRULES  6
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  9
+#define YYNSTATES  10
 
 #define YYUNDEFTOK  2
 #define YYMAXUTOK   262
@@ -441,7 +441,7 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    31,    31,    32,    38,    42,    46
+       0,    31,    31,    32,    38,    42,    51
 };
 #endif
 
@@ -464,10 +464,10 @@ static const yytype_uint16 yytoknum[] =
 };
 # endif
 
-#define YYPACT_NINF -3
+#define YYPACT_NINF -4
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-3)))
+  (!!((Yystate) == (-4)))
 
 #define YYTABLE_NINF -1
 
@@ -478,7 +478,7 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      -3,     0,    -3,    -3,    -2,    -1,    -3,    -3,    -3
+      -4,     0,    -4,    -4,    -2,    -1,    -4,    -4,    -3,    -4
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -486,13 +486,13 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       2,     0,     1,     6,     0,     0,     3,     4,     5
+       2,     0,     1,     6,     0,     0,     3,     4,     0,     5
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -3,    -3,    -3
+      -4,    -4,    -4
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
@@ -506,19 +506,19 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-       2,     7,     8,     0,     0,     3,     4,     5
+       2,     7,     9,     8,     0,     3,     4,     5
 };
 
 static const yytype_int8 yycheck[] =
 {
-       0,     3,     3,    -1,    -1,     5,     6,     7
+       0,     3,     5,     4,    -1,     5,     6,     7
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     9,     0,     5,     6,     7,    10,     3,     3
+       0,     9,     0,     5,     6,     7,    10,     3,     4,     5
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
@@ -530,7 +530,7 @@ static const yytype_uint8 yyr1[] =
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     0,     2,     2,     2,     1
+       0,     2,     0,     2,     2,     3,     1
 };
 
 
@@ -1233,22 +1233,27 @@ yyreduce:
   case 5:
 #line 43 "src/asm/parser.y"
     {
-    printf("pop %f\n", (yyvsp[0].number));
+    switch ((yyvsp[-1].sigil))
+    {
+      case '$':
+        printf("$%s = pop\n", (yyvsp[0].text));
+        break;
+    }
   }
-#line 1239 "parser.tab.c"
+#line 1244 "parser.tab.c"
     break;
 
   case 6:
-#line 47 "src/asm/parser.y"
+#line 52 "src/asm/parser.y"
     {
     sprintf(error_text, "'%s' not defined", (yyvsp[0].text));
     yyerror(error_text);
   }
-#line 1248 "parser.tab.c"
+#line 1253 "parser.tab.c"
     break;
 
 
-#line 1252 "parser.tab.c"
+#line 1257 "parser.tab.c"
 
       default: break;
     }
@@ -1480,7 +1485,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 52 "src/asm/parser.y"
+#line 57 "src/asm/parser.y"
 
 
 int main(int argc, char **argv)
